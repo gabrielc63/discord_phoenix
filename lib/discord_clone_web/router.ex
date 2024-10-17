@@ -14,6 +14,16 @@ defmodule DiscordCloneWeb.Router do
     plug :fetch_current_user
   end
 
+  pipeline :auth_layout do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, {DiscordCloneWeb.Layouts, :auth}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug :fetch_current_user
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -51,7 +61,7 @@ defmodule DiscordCloneWeb.Router do
   ## Authentication routes
 
   scope "/", DiscordCloneWeb do
-    pipe_through [:browser, :redirect_if_user_is_authenticated]
+    pipe_through [:auth_layout, :redirect_if_user_is_authenticated]
 
     live_session :redirect_if_user_is_authenticated,
       on_mount: [{DiscordCloneWeb.UserAuth, :redirect_if_user_is_authenticated}] do

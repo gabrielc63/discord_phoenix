@@ -11,15 +11,22 @@ defmodule DiscordCloneWeb.ServerLive.Show do
 
   def render(assigns) do
     ~H"""
-    <h1><%= @server.name %> Channels</h1>
-    <br />
-    <ul>
-      <%= for channel <- @channels do %>
-        <li>
-          <%= live_patch(channel.name, to: ~p"/servers/#{@server}/channels/#{channel}") %>
-        </li>
-      <% end %>
-    </ul>
+    <div class="text-gray-300">
+      <h1 class="text-white font-bold text-xl p-4 shadow-md"><%= @server.name %></h1>
+      <div class="px-2 py-3">
+        <h2 class="text-gray-500 uppercase text-xs font-semibold px-2 mb-2">Text Channels</h2>
+        <ul>
+          <%= for channel <- @channels do %>
+            <li class="px-2">
+              <%= live_patch to: ~p"/servers/#{@server}/channels/#{channel}", class: "flex items-center text-gray-400 hover:text-gray-200 hover:bg-gray-700 px-2 py-1 rounded" do %>
+                <span class="text-xl mr-1">#</span>
+                <%= channel.name %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
     """
   end
 end
