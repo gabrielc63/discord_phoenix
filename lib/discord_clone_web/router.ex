@@ -1,4 +1,5 @@
 defmodule DiscordCloneWeb.Router do
+  # alias Agent.Server
   use DiscordCloneWeb, :router
 
   import DiscordCloneWeb.UserAuth
@@ -18,9 +19,11 @@ defmodule DiscordCloneWeb.Router do
   end
 
   scope "/", DiscordCloneWeb do
-    pipe_through :browser
+    pipe_through [:browser, :require_authenticated_user]
 
-    get "/", PageController, :home
+    live "/", ServerLive.Index, :index
+    live "/servers/:id", ServerLive.Show, :show
+    live "/servers/:server_id/channels/:id", ChannelLive.Show, :show
   end
 
   # Other scopes may use custom stacks.
