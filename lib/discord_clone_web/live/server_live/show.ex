@@ -3,28 +3,135 @@ defmodule DiscordCloneWeb.ServerLive.Show do
   alias DiscordClone.Servers
   alias DiscordClone.Channels
 
+  @impl true
   def mount(%{"id" => server_id}, _session, socket) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(DiscordClone.PubSub, "chat:lobby")
+    end
+
     server = Servers.get_server!(server_id)
     channels = Channels.list_channels(server_id)
-    {:ok, assign(socket, server: server, channels: channels)}
+
+    {:ok,
+     assign(socket,
+       messages: [],
+       current_message: "",
+       channels: ["general", "random", "help"],
+       current_channel: "general",
+       online_users: [],
+       server: server,
+       channels: channels
+     )}
   end
 
+  @impl true
+  def handle_event("typing", %{"value" => value}, socket) do
+    {:noreply, assign(socket, current_message: value)}
+  end
+
+  @impl true
+  def handle_event("send_message", %{"message" => content}, socket) do
+    message = %{
+      id: System.unique_integer(),
+      content: content,
+      user: socket.assigns.current_user,
+      timestamp: DateTime.utc_now(),
+      channel: socket.assigns.current_channel
+    }
+
+    Phoenix.PubSub.broadcast(DiscordClone.PubSub, "chat:lobby", {:new_message, message})
+    {:noreply, assign(socket, current_message: "")}
+  end
+
+  @impl true
+  def handle_event("switch_channel", %{"channel" => channel}, socket) do
+    {:noreply, assign(socket, current_channel: channel)}
+  end
+
+  @impl true
+  def handle_info({:new_message, message}, socket) do
+    {:noreply, update(socket, :messages, &[message | &1])}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
-    <div class="text-gray-300">
-      <h1 class="text-white font-bold text-xl p-4 shadow-md"><%= @server.name %></h1>
-      <div class="px-2 py-3">
-        <h2 class="text-gray-500 uppercase text-xs font-semibold px-2 mb-2">Text Channels</h2>
-        <ul>
+    <div class="flex h-screen bg-gray-800 text-gray-100">
+      <!-- Channels Sidebar -->
+      <div class="w-60 bg-gray-800 flex flex-col">
+        <div class="p-4 shadow-md">
+          <h1 class="font-bold">Server Name</h1>
+        </div>
+        <div class="flex-1 overflow-y-auto">
           <%= for channel <- @channels do %>
-            <li class="px-2">
-              <%= live_patch to: ~p"/servers/#{@server}/channels/#{channel}", class: "flex items-center text-gray-400 hover:text-gray-200 hover:bg-gray-700 px-2 py-1 rounded" do %>
-                <span class="text-xl mr-1">#</span>
-                <%= channel.name %>
-              <% end %>
-            </li>
+            <div
+              class={"flex items-center px-2 py-1 mx-2 rounded cursor-pointer #{if @current_channel == channel, do: "bg-gray-700"}"}
+              phx-click="switch_channel"
+              phx-value-channel={channel.id}
+            >
+              <span class="mr-2">#</span>
+              <span><%= channel.name %></span>
+            </div>
           <% end %>
-        </ul>
+        </div>
+        <div class="p-4 bg-gray-900">
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-gray-700 rounded-full"></div>
+            <div>
+              <div class="text-sm font-medium"><%= @current_user.email %></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Main Chat Area -->
+      <div class="flex-1 flex flex-col">
+        <div class="p-4 shadow-md flex items-center">
+          <span class="mr-2">#</span>
+          <span class="font-bold"><%= @current_channel %></span>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+          <%= for message <- Enum.reverse(@messages) do %>
+            <%= if message.channel == @current_channel do %>
+              <div class="flex items-start space-x-4">
+                <div class="w-10 h-10 rounded-full bg-gray-700 flex-shrink-0"></div>
+                <div>
+                  <div class="flex items-baseline space-x-2">
+                    <span class="font-bold"><%= message.user.email %></span>
+                    <span class="text-xs text-gray-400">
+                      <%= Calendar.strftime(message.timestamp, "%H:%M") %>
+                    </span>
+                  </div>
+                  <p class="text-gray-300"><%= message.content %></p>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+
+        <form phx-submit="send_message" class="p-4">
+          <div class="flex items-center bg-gray-700 rounded-lg px-4 py-2">
+            <input
+              type="text"
+              name="message"
+              value={@current_message}
+              placeholder={"Message ##{@current_channel}"}
+              class="flex-1 bg-transparent outline-none"
+              autocomplete="off"
+              phx-keyup="typing"
+            />
+            <button type="submit" class="ml-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                />
+              </svg>
+            </button>
+          </div>
+        </form>
       </div>
     </div>
     """

@@ -8,12 +8,13 @@ defmodule DiscordClone.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      # Start the PubSub system
+      {Phoenix.PubSub, name: DiscordClone.PubSub},
+
       # Start the Telemetry supervisor
       DiscordCloneWeb.Telemetry,
       # Start the Ecto repository
       DiscordClone.Repo,
-      # Start the PubSub system
-      {Phoenix.PubSub, name: DiscordClone.PubSub},
       # Start Finch
       {Finch, name: DiscordClone.Finch},
       # Start the Endpoint (http/https)

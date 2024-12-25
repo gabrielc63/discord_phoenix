@@ -65,26 +65,8 @@
         </div>
       </nav>
       <!-- Main content -->
-      <div class="flex flex-1 overflow-hidden">
-        <!-- Server list sidebar -->
-        <div class="w-16 md:w-18 bg-gray-900 p-3 space-y-2 overflow-y-auto hidden sm:block">
-          <!-- Server icons would go here -->
-        </div>
         <!-- Main content area -->
-        <div class="flex-1 flex flex-col sm:flex-row">
-          <!-- Channel list sidebar -->
-          <div class="w-full sm:w-60 bg-gray-800 overflow-y-auto">
-            <%= @inner_content %>
-          </div>
-          <!-- Chat area -->
-          <div class="flex-1 flex flex-col bg-gray-700 overflow-y-auto hidden sm:flex">
-            <!-- Chat messages go here -->
-            <div class="flex-1 p-4">
-              <p class="text-gray-400">Select a channel to start chatting</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <%= @inner_content %>
     </div>
   </body>
 </html>

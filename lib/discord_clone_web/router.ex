@@ -31,9 +31,12 @@ defmodule DiscordCloneWeb.Router do
   scope "/", DiscordCloneWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    live "/", ServerLive.Index, :index
-    live "/servers/:id", ServerLive.Show, :show
-    live "/servers/:server_id/channels/:id", ChannelLive.Show, :show
+    live_session :require_auth,
+      on_mount: [{DiscordCloneWeb.LiveAuth, :require_authenticated_user}] do
+      live "/", ServerLive.Index, :index
+      live "/servers/:id", ServerLive.Show, :show
+      live "/servers/:server_id/channels/:id", ChannelLive.Show, :show
+    end
   end
 
   # Other scopes may use custom stacks.
