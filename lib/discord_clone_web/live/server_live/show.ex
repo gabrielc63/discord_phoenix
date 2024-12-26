@@ -10,16 +10,18 @@ defmodule DiscordCloneWeb.ServerLive.Show do
     end
 
     server = Servers.get_server!(server_id)
+    servers = Servers.list_servers()
     channels = Channels.list_channels(server_id)
 
     {:ok,
      assign(socket,
        messages: [],
        current_message: "",
-       channels: ["general", "random", "help"],
-       current_channel: "general",
+       channels: channels,
+       current_channel: List.first(channels).name,
        online_users: [],
        server: server,
+       servers: servers,
        channels: channels
      )}
   end
@@ -57,17 +59,31 @@ defmodule DiscordCloneWeb.ServerLive.Show do
   def render(assigns) do
     ~H"""
     <div class="flex h-screen bg-gray-800 text-gray-100">
+      <div class="w-16 bg-gray-900 flex flex-col items-center py-3 space-y-3">
+        <%= for server <- @servers do %>
+          <%= live_patch to: ~p"/servers/#{server}", class: "block" do %>
+            <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
+              <span class="text-xl font-bold"><%= String.at(server.name, 0) %></span>
+            </div>
+          <% end %>
+        <% end %>
+
+        <div class="w-12 h-1 bg-gray-700 rounded-full" />
+        <button class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center hover:bg-green-500 transition-colors">
+          +
+        </button>
+      </div>
       <!-- Channels Sidebar -->
       <div class="w-60 bg-gray-800 flex flex-col">
         <div class="p-4 shadow-md">
-          <h1 class="font-bold">Server Name</h1>
+          <h1 class="font-bold"><%= @server.name %></h1>
         </div>
         <div class="flex-1 overflow-y-auto">
           <%= for channel <- @channels do %>
             <div
               class={"flex items-center px-2 py-1 mx-2 rounded cursor-pointer #{if @current_channel == channel, do: "bg-gray-700"}"}
               phx-click="switch_channel"
-              phx-value-channel={channel.id}
+              phx-value-channel={channel.name}
             >
               <span class="mr-2">#</span>
               <span><%= channel.name %></span>

@@ -9,19 +9,21 @@ defmodule DiscordCloneWeb.ServerLive.Index do
 
   def render(assigns) do
     ~H"""
-    <div class="py-2">
-      <h1 class="text-white font-bold text-xl px-4 mb-2">Servers</h1>
-      <ul class="flex flex-row sm:flex-col overflow-x-auto sm:overflow-x-visible">
+    <div class="flex h-screen bg-gray-800 text-gray-100">
+      <div class="w-16 bg-gray-900 flex flex-col items-center py-3 space-y-3">
         <%= for server <- @servers do %>
-          <li class="px-2 py-1">
-            <%= live_patch to: ~p"/servers/#{server}", class: "block" do %>
-              <div class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold hover:bg-indigo-500 transition-colors">
-                <%= String.at(server.name, 0) %>
-              </div>
-            <% end %>
-          </li>
+          <%= live_patch to: ~p"/servers/#{server}", class: "block" do %>
+            <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
+              <span class="text-xl font-bold"><%= String.at(server.name, 0) %></span>
+            </div>
+          <% end %>
         <% end %>
-      </ul>
+
+        <div class="w-12 h-1 bg-gray-700 rounded-full" />
+        <button class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center hover:bg-green-500 transition-colors">
+          +
+        </button>
+      </div>
     </div>
     """
   end
