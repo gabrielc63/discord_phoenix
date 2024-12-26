@@ -1,18 +1,160 @@
 # DiscordClone
 
-To start your Phoenix server:
+## Phoenix LiveView Chat Application
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+A real-time chat application built with Phoenix LiveView, inspired by Discord's UI. This application demonstrates the power of Phoenix LiveView for building interactive, real-time web applications without writing any JavaScript.
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+## Features
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+- Real-time message updates using Phoenix PubSub
+- Multiple chat channels with instant switching
+- Discord-inspired UI using TailwindCSS
+- Message persistence within the LiveView session
+- User identification system
+- Responsive design
 
-## Learn more
+## Prerequisites
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+- Elixir 1.14 or later
+- Phoenix 1.7 or later
+- PostgreSQL (optional, current version stores messages in memory)
+- Node.js 14 or later (for asset compilation)
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone <repository-url>
+cd chat
+```
+
+2. Install dependencies:
+
+```bash
+mix deps.get
+mix deps.compile
+```
+
+3. Install Node.js dependencies:
+
+```bash
+cd assets
+npm install
+cd ..
+```
+
+4. Start the Phoenix server:
+
+```bash
+mix phx.server
+```
+
+Now you can visit [`localhost:4000/chat`](http://localhost:4000/chat) from your browser.
+
+## Project Structure
+
+```
+lib/
+├── chat/
+│   └── application.ex
+├── chat_web/
+│   ├── live/
+│   │   └── chat_live.ex    # Main LiveView module
+│   ├── router.ex
+│   └── endpoint.ex
+test/
+├── chat_web/
+│   └── live/
+│   │   └── chat_live_test.exs    # LiveView tests
+└── support/
+    └── conn_case.ex
+```
+
+## Key Components
+
+### ChatLive Module
+
+The main LiveView module (`lib/chat_web/live/chat_live.ex`) handles:
+
+- Real-time message broadcasting
+- Channel management
+- User session management
+- UI rendering
+
+## Testing
+
+Run the test suite:
+
+```bash
+mix test
+```
+
+The test suite covers:
+
+- LiveView mounting
+- Message sending and receiving
+- Channel switching
+- Real-time updates
+- User management
+
+## Deployment
+
+This application can be deployed to any platform that supports Phoenix applications. For Heroku deployment:
+
+1. Add build packs:
+
+```bash
+heroku buildpacks:add hashnuke/elixir
+heroku buildpacks:add https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
+```
+
+2. Configure environment variables:
+
+```bash
+heroku config:set SECRET_KEY_BASE=$(mix phx.gen.secret)
+heroku config:set PHX_HOST=your-app-name.herokuapp.com
+```
+
+## Future Improvements
+
+1. **Persistence**
+
+   - Add database storage for messages
+   - Implement message history
+
+2. **User Features**
+
+   - User authentication
+   - User profiles and avatars
+   - Online status tracking
+
+3. **Channel Features**
+
+   - Private channels
+   - Direct messaging
+   - Channel permissions
+
+4. **UI Enhancements**
+   - Message formatting
+   - File uploads
+   - Emoji support
+   - Typing indicators
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE.md file for details.
+
+## Acknowledgments
+
+- Phoenix Framework team for LiveView
+- Discord for UI inspiration
+- TailwindCSS for styling utilities
