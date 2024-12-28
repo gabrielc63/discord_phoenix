@@ -34,7 +34,9 @@ defmodule DiscordCloneWeb.UserRegistrationLive do
         <.input field={@form[:email]} type="email" label="Email" required />
       </div>
 
-      <.input field={@form[:password]} type="password" label="Password" required />
+      <div class="mt-1">
+        <.input field={@form[:password]} type="password" label="Password" required />
+      </div>
 
       <:actions>
         <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
