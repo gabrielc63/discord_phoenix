@@ -17,6 +17,17 @@ defmodule DiscordClone.AccountsTest do
     end
   end
 
+  describe "get_user_by_username/1" do
+    test "does not return the user if the username does not exist" do
+      refute Accounts.get_user_by_username("new_full_user2024")
+    end
+
+    test "returns the user if the username exists" do
+      %{id: id} = user = user_fixture()
+      assert %User{id: ^id} = Accounts.get_user_by_username(user.username)
+    end
+  end
+
   describe "get_user_by_email_and_password/2" do
     test "does not return the user if the email does not exist" do
       refute Accounts.get_user_by_email_and_password("unknown@example.com", "hello world!")
@@ -84,6 +95,12 @@ defmodule DiscordClone.AccountsTest do
       assert "has already been taken" in errors_on(changeset).email
     end
 
+    test "validates username uniqueness" do
+      %{username: username, email: email, password: password} = user_fixture()
+      {:error, changeset} = Accounts.register_user(%{username: username, email: email, password: password})
+      assert "has already been taken" in errors_on(changeset).username
+    end
+
     test "registers users with a hashed password" do
       email = unique_user_email()
       {:ok, user} = Accounts.register_user(valid_user_attributes(email: email))
@@ -97,7 +114,7 @@ defmodule DiscordClone.AccountsTest do
   describe "change_user_registration/2" do
     test "returns a changeset" do
       assert %Ecto.Changeset{} = changeset = Accounts.change_user_registration(%User{})
-      assert changeset.required == [:password, :email]
+      assert changeset.required == [:password, :username, :email]
     end
 
     test "allows fields to be set" do

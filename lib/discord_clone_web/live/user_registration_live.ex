@@ -6,16 +6,21 @@ defmodule DiscordCloneWeb.UserRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <.header class="text-center">
-      Register for an account
-      <:subtitle>
-        Already registered?
-        <.link navigate={~p"/users/log_in"} class="font-semibold text-brand hover:underline">
-          Log in
-        </.link>
-        to your account now.
-      </:subtitle>
-    </.header>
+    <header class="flex items-center justify-between gap-6">
+      <div>
+        <h1 class="text-2xl font-bold text-white mb-6">
+          Create an account
+        </h1>
+        <p class="mt-2 text-sm leading-6 text-white">
+          Already registered?
+          <a href="/users/log_in" data-phx-link="redirect" data-phx-link-state="push" class="font-semibold text-brand hover:underline" data-phx-id="m5-phx-GBV5KSbPxIfVaBoB">
+            Log in
+          </a>
+          to your account now.
+        </p>
+      </div>
+      <div class="flex-none"></div>
+    </header>
 
     <.simple_form
       for={@form}
@@ -30,16 +35,30 @@ defmodule DiscordCloneWeb.UserRegistrationLive do
       <.error :if={@check_errors}>
         Oops, something went wrong! Please check the errors below.
       </.error>
-      <div class="mt-1">
-        <.input field={@form[:email]} type="email" label="Email" required />
+      <div class="space-y-2">
+        <label for="email" class="block text-sm font-medium text-gray-300 uppercase">Email</label>
+        <.input field={@form[:email]} type="email"  required />
       </div>
 
-      <div class="mt-1">
-        <.input field={@form[:password]} type="password" label="Password" required />
+      <div class="space-y-2">
+        <label for="username" class="block text-sm font-medium text-gray-300 uppercase">Username</label>
+        <.input
+          field={@form[:username]}
+          type="text"
+          required
+          class={["w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"]}
+        />
+      </div>
+
+      <div class="space-y-2">
+        <label for="password" class="block text-sm font-medium text-gray-300 uppercase">Password</label>
+        <.input field={@form[:password]} type="password"  required />
       </div>
 
       <:actions>
-        <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
+        <.button phx-disable-with="Creating account..." class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out">
+          Conitnue
+        </.button>
       </:actions>
     </.simple_form>
     """

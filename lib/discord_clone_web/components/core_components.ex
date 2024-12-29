@@ -344,9 +344,8 @@ defmodule DiscordCloneWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "appearance-none block w-full px-3 py-2 border border-[#1e1f22] rounded-md shadow-sm bg-[#1e1f22] text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+          "w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent",
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          "",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
