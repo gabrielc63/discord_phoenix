@@ -56,7 +56,8 @@ defmodule DiscordCloneWeb.UserRegistrationLive do
       </div>
 
       <:actions>
-        <.button phx-disable-with="Creating account..." class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out">
+        <.button phx-disable-with="Creating account..." 
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out">
           Conitnue
         </.button>
       </:actions>

@@ -93,8 +93,14 @@ defmodule DiscordCloneWeb.ServerLive.Show do
         <div class="p-4 bg-gray-900">
           <div class="flex items-center space-x-2">
             <div class="w-8 h-8 bg-gray-700 rounded-full"></div>
-            <div>
-              <div class="text-sm font-medium"><%= @current_user.email %></div>
+            <div class="flex-1">
+              <div class="text-sm font-medium"><%= @current_user.username %></div>
+              <div class="text-discord-channel text-xs">Online</div>
+            </div>
+            <div class="flex space-x-2 text-discord-channel">
+              <i class="fas fa-microphone cursor-pointer hover:text-gray-300"></i>
+              <i class="fas fa-headphones cursor-pointer hover:text-gray-300"></i>
+              <i class="fas fa-cog cursor-pointer hover:text-gray-300"></i>
             </div>
           </div>
         </div>
