@@ -14,6 +14,9 @@ module.exports = {
         discord: {
           "gray-dark": "#36393f",
           "gray-light": "#40444b",
+          button: "#5865f2",
+          "button-hover": "#4752c4",
+          link: "#00a8fc",
         },
       },
     },

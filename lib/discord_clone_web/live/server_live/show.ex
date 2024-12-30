@@ -119,7 +119,7 @@ defmodule DiscordCloneWeb.ServerLive.Show do
                 <div class="w-10 h-10 rounded-full bg-gray-700 flex-shrink-0"></div>
                 <div>
                   <div class="flex items-baseline space-x-2">
-                    <span class="font-bold"><%= message.user.email %></span>
+                    <span class="font-bold"><%= message.user.username %></span>
                     <span class="text-xs text-gray-400">
                       <%= Calendar.strftime(message.timestamp, "%H:%M") %>
                     </span>
