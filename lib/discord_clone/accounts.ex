@@ -26,9 +26,27 @@ defmodule DiscordClone.Accounts do
     Repo.get_by(User, email: email)
   end
 
+  @doc """
+  Gets a user by username.
+  """
+
   def get_user_by_username(username) when is_binary(username) do
     Repo.get_by(User, username: username)
   end
+
+  @doc """
+  Returns the list of servers.
+
+  ## Examples
+
+      iex> list_users()
+      [%User{}, ...]
+
+  """
+  def list_users do
+    Repo.all(User)
+  end
+
 
   @doc """
   Gets a user by email and password.
