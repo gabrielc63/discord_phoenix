@@ -6,21 +6,18 @@ defmodule DiscordCloneWeb.UserRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <header class="flex items-center justify-between gap-6">
-      <div>
-        <h1 class="text-2xl font-bold text-white mb-6">
-          Create an account
-        </h1>
-        <p class="mt-2 text-sm leading-6 text-white">
-          Already registered?
-          <a href="/users/log_in" data-phx-link="redirect" data-phx-link-state="push" class="font-semibold text-brand hover:underline" data-phx-id="m5-phx-GBV5KSbPxIfVaBoB">
-            Log in
-          </a>
-          to your account now.
-        </p>
-      </div>
-      <div class="flex-none"></div>
-    </header>
+
+
+    <div class="text-center mb-8">
+      <h1 class="text-2xl font-bold text-white mb-2">Create an account</h1>
+      <p class="text-gray-400">
+        Already registered?
+        <.link navigate={~p"/users/log_in"} class="text-discord-link hover:underline">
+          Log in
+        </.link>
+        to your account.
+      </p>
+    </div>
 
     <.simple_form
       for={@form}
@@ -46,7 +43,7 @@ defmodule DiscordCloneWeb.UserRegistrationLive do
           field={@form[:username]}
           type="text"
           required
-          class={["w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"]}
+          class="w-full px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
         />
       </div>
 
