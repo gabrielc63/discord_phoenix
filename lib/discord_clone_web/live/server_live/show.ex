@@ -2,6 +2,7 @@ defmodule DiscordCloneWeb.ServerLive.Show do
   use DiscordCloneWeb, :live_view
   alias DiscordClone.Servers
   alias DiscordClone.Channels
+  alias DiscordClone.Accounts
 
   @impl true
   def mount(%{"id" => server_id}, _session, socket) do
@@ -12,6 +13,7 @@ defmodule DiscordCloneWeb.ServerLive.Show do
     server = Servers.get_server!(server_id)
     servers = Servers.list_servers()
     channels = Channels.list_channels(server_id)
+    users = Accounts.list_users()
 
     {:ok,
      assign(socket,
@@ -19,7 +21,7 @@ defmodule DiscordCloneWeb.ServerLive.Show do
        current_message: "",
        channels: channels,
        current_channel: List.first(channels).name,
-       online_users: [],
+       online_users: users,
        server: server,
        servers: servers,
        channels: channels
@@ -59,6 +61,7 @@ defmodule DiscordCloneWeb.ServerLive.Show do
   def render(assigns) do
     ~H"""
     <div class="flex h-screen bg-gray-800 text-gray-100">
+      <!-- Servers Sidebar -->
       <div class="w-16 bg-gray-900 flex flex-col items-center py-3 space-y-3">
         <%= for server <- @servers do %>
           <.link  patch={~p"/servers/#{server}"} class="block">
@@ -105,11 +108,15 @@ defmodule DiscordCloneWeb.ServerLive.Show do
           </div>
         </div>
       </div>
+
       <!-- Main Chat Area -->
-      <div class="flex-1 flex flex-col">
-        <div class="p-4 shadow-md flex items-center">
-          <span class="mr-2">#</span>
-          <span class="font-bold"><%= @current_channel %></span>
+      <div class="flex-1 flex flex-col bg-discord-primary">
+
+
+        <!-- Channel Header -->
+        <div class="h-12 border-b border-gray-800 flex items-center px-4 shadow-sm">
+          <i class="fas fa-hashtag text-discord-channel mr-2"></i>
+          <span class="text-white font-bold"><%= @current_channel %></span>
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4">
@@ -132,7 +139,7 @@ defmodule DiscordCloneWeb.ServerLive.Show do
         </div>
 
         <form phx-submit="send_message" class="p-4">
-          <div class="flex items-center bg-gray-700 rounded-lg px-4 py-2">
+          <div class="flex items-center bg-discord-hover rounded-lg p-4">
             <input
               type="text"
               name="message"
@@ -154,6 +161,31 @@ defmodule DiscordCloneWeb.ServerLive.Show do
             </button>
           </div>
         </form>
+      </div>
+
+      <!-- Online Users Sidebar -->
+      <div class="w-60 bg-discord-secondary flex flex-col">
+          <div class="p-4 shadow-md">
+              <h2 class="text-white font-bold">Online - <%= length(@online_users) %></h2>
+          </div>
+          <div class="flex-1 overflow-y-auto">
+              <!-- Online Users List -->
+              <div class="px-2 pt-4 space-y-2">
+                  <%= for user <- @online_users do %>
+                  <div class="flex items-center px-2 py-1 text-discord-channel hover:bg-discord-hover rounded cursor-pointer">
+                      <div class="w-8 h-8 rounded-full bg-blue-500 mr-2 relative">
+                          <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-discord-secondary"></div>
+                      </div>
+                      <span class="text-white">
+                        <%= user.username %>
+                        <%= if user.username == @current_user.username do %>
+                        (you)
+                        <% end %>
+                      </span>
+                  </div>
+                  <% end %>
+              </div>
+          </div>
       </div>
     </div>
     """

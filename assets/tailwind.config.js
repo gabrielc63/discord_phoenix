@@ -14,6 +14,11 @@ module.exports = {
         discord: {
           "gray-dark": "#36393f",
           "gray-light": "#40444b",
+          primary: "#36393f",
+          secondary: "#2f3136",
+          tertiary: "#202225",
+          channel: "#8e9297",
+          hover: "#40444b",
           button: "#5865f2",
           "button-hover": "#4752c4",
           link: "#00a8fc",
