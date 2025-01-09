@@ -1,26 +1,39 @@
 defmodule DiscordCloneWeb.ServerLive.Show do
+  require Logger
   use DiscordCloneWeb, :live_view
   alias DiscordClone.Servers
   alias DiscordClone.Channels
-  alias DiscordClone.Accounts
+  alias DiscordCloneWeb.Presence
+  alias Phoenix.Socket.Broadcast
+
 
   @impl true
   def mount(%{"id" => server_id}, _session, socket) do
+    server = Servers.get_server!(server_id)
+
     if connected?(socket) do
       Phoenix.PubSub.subscribe(DiscordClone.PubSub, "chat:lobby")
+      Phoenix.PubSub.subscribe(DiscordClone.PubSub, server.name)
+
+      username = socket.assigns.current_user.username
+
+      {:ok, _} =  Presence.track_user(self(), server.name, %{
+        username: username,
+        online_at: DateTime.utc_now()
+      })
     end
 
-    server = Servers.get_server!(server_id)
-    servers = Servers.list_servers()
     channels = Channels.list_channels(server_id)
-    users = Accounts.list_users()
+    current_channel = List.first(channels).name
+    servers = Servers.list_servers()
+    users = Presence.list_users(server.name)
 
     {:ok,
      assign(socket,
        messages: [],
        current_message: "",
        channels: channels,
-       current_channel: List.first(channels).name,
+       current_channel: current_channel,
        online_users: users,
        server: server,
        servers: servers,
@@ -55,6 +68,13 @@ defmodule DiscordCloneWeb.ServerLive.Show do
   @impl true
   def handle_info({:new_message, message}, socket) do
     {:noreply, update(socket, :messages, &[message | &1])}
+  end
+
+  @impl true
+  def handle_info(%Broadcast{event: "presence_diff"} = _event, socket) do
+    online_users = Presence.list_users(socket.assigns.server.name)
+
+    {:noreply, assign(socket, :online_users, online_users)}
   end
 
   @impl true
@@ -170,7 +190,7 @@ defmodule DiscordCloneWeb.ServerLive.Show do
           </div>
           <div class="flex-1 overflow-y-auto">
               <!-- Online Users List -->
-              <div class="px-2 pt-4 space-y-2">
+          <div class="px-2 pt-4 space-y-2">
                   <%= for user <- @online_users do %>
                   <div class="flex items-center px-2 py-1 text-discord-channel hover:bg-discord-hover rounded cursor-pointer">
                       <div class="w-8 h-8 rounded-full bg-blue-500 mr-2 relative">
@@ -187,7 +207,9 @@ defmodule DiscordCloneWeb.ServerLive.Show do
               </div>
           </div>
       </div>
+
     </div>
+    
     """
   end
 end

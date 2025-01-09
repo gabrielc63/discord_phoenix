@@ -17,6 +17,8 @@ defmodule DiscordClone.Application do
       DiscordClone.Repo,
       # Start Finch
       {Finch, name: DiscordClone.Finch},
+      # Adding presence
+      DiscordCloneWeb.Presence,
       # Start the Endpoint (http/https)
       DiscordCloneWeb.Endpoint
       # Start a worker by calling: DiscordClone.Worker.start_link(arg)
