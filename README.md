@@ -56,30 +56,30 @@ Now you can visit [`localhost:4000/chat`](http://localhost:4000/chat) from your 
 
 ```
 lib/
-├── chat/
+├── discord_clone/
 │   └── application.ex
-├── chat_web/
+├── discord_clone_web/
 │   ├── live/
-│   │   └── chat_live.ex    # Main LiveView module
+│   │   └── server_live/    # Main LiveView modules
+    |       └── index.ex
+    |       └── show.ex
 │   ├── router.ex
 │   └── endpoint.ex
 test/
-├── chat_web/
-│   └── live/
-│   │   └── chat_live_test.exs    # LiveView tests
+├── discord_clone_web/
+│   └── live/               # LiveView tests
 └── support/
     └── conn_case.ex
 ```
 
 ## Key Components
 
-### ChatLive Module
-
-The main LiveView module (`lib/chat_web/live/chat_live.ex`) handles:
+The app handles:
 
 - Real-time message broadcasting
 - Channel management
 - User session management
+- User connection tracking
 - UI rendering
 
 ## Testing
